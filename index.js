@@ -30,6 +30,7 @@ async function run() {
 
     const postsCollection = client.db("forumDB").collection('posts')
     const usersCollection = client.db("forumDB").collection('users')
+    const announcementCollection = client.db("forumDB").collection('announcement')
 
     // JWT related api
     app.post('/jwt', async (req, res) => {
@@ -135,6 +136,19 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await usersCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    // announcement related api
+
+    app.get('/announcement' , async(req, res)=> {
+      const result = await announcementCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.post('/announcement', async(req, res)=> {
+      const announcement = req.body;
+      const result = await announcementCollection.insertOne(announcement)
       res.send(result)
     })
 
