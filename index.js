@@ -5,6 +5,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const stripe = require("stripe")(process.env.PAYMENT_SECRET_KEY)
 // middlewares 
 
 app.use(cors())
@@ -31,6 +32,7 @@ async function run() {
     const postsCollection = client.db("forumDB").collection('posts')
     const usersCollection = client.db("forumDB").collection('users')
     const announcementCollection = client.db("forumDB").collection('announcement')
+    const commentCollection = client.db("forumDB").collection('comment')
 
     // JWT related api
     app.post('/jwt', async (req, res) => {
@@ -152,8 +154,17 @@ async function run() {
       res.send(result)
     })
 
+    // COMMENT API
 
-
+    app.get( '/comment', async(req, res)=> {
+      const result = await commentCollection.find().toArray();
+      res.send(result)
+    })
+    app.post('/comment', async(req, res)=> {
+        const comment = req.body;
+        const result = await commentCollection.insertOne(comment);
+        res.send(result);
+    })
 
 
 
